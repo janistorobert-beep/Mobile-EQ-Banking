@@ -183,7 +183,7 @@ function ensureTx(key, extra){
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   BASIC
+   BASIC ROUTES
    ═══════════════════════════════════════════════════════════════ */
 app.get('/', (_req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -218,7 +218,7 @@ app.get('/health', (_req, res) => res.json({
 app.post('/api/links', (req, res) => {
   try {
     const body = req.body || {};
-    const tracking = String(body.trackingNumber || body.tx || body.t || '').trim().toUpperCase();
+    const tracking = String(body.trackingNumber || body.tn || body.tx || body.t || '').trim().toUpperCase();
     if (!tracking) return res.status(400).json({ ok:false, error:'Tracking number required' });
 
     const now = Date.now();
@@ -226,6 +226,7 @@ app.post('/api/links', (req, res) => {
 
     const record = {
       trackingNumber: tracking,
+      transactionId: body.transactionId || body.tx || '',
       accountName: body.accountName || body.rn || '',
       accountNumber: body.accountNumber || body.an || '',
       amount: body.amount || body.am || '0',
@@ -237,6 +238,7 @@ app.post('/api/links', (req, res) => {
       receiptOptional: body.receiptOptional || body.sn || '',
       marketedBy: body.marketedBy || body.mk || '',
       purpose: body.purpose || body.pu || '',
+      note: body.note || body.nt || '',
       lang: normalizeLang(body.lang),
       expiryHours,
       createdAt: now,
@@ -524,11 +526,11 @@ app.post('/api/telegram-webhook', async (req, res) => {
 app.use(express.static(__dirname, { extensions: ['html'] }));
 
 /* Short-link handler — /ABC12345 → serve client.html.
-   Must be BEFORE the /api 404 catch-all and AFTER static,
-   so real files like /index.html still resolve first. */
+   Must run AFTER static (so real files resolve first) but BEFORE
+   the /api 404 catch-all. Accepts hyphens so old TXN-... links work. */
 app.get('/:code', (req, res, next) => {
   const code = String(req.params.code || '').toUpperCase();
-  if (!/^[A-Z0-9]{6,12}$/.test(code)) return next();
+  if (!/^[A-Z0-9-]{6,20}$/.test(code)) return next();
   if (!links.has(code)) return next();
   res.sendFile(path.join(__dirname, 'client.html'));
 });
