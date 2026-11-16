@@ -186,6 +186,10 @@ function ensureTx(key, extra){
    BASIC
    ═══════════════════════════════════════════════════════════════ */
 app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/status', (_req, res) => {
   res.json({
     ok: true,
     service: 'eq-bank-payments-backend',
@@ -515,9 +519,19 @@ app.post('/api/telegram-webhook', async (req, res) => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
-   STATIC + 404
+   STATIC + SHORT-LINK ROUTER + 404
    ═══════════════════════════════════════════════════════════════ */
 app.use(express.static(__dirname, { extensions: ['html'] }));
+
+/* Short-link handler — /ABC12345 → serve client.html.
+   Must be BEFORE the /api 404 catch-all and AFTER static,
+   so real files like /index.html still resolve first. */
+app.get('/:code', (req, res, next) => {
+  const code = String(req.params.code || '').toUpperCase();
+  if (!/^[A-Z0-9]{6,12}$/.test(code)) return next();
+  if (!links.has(code)) return next();
+  res.sendFile(path.join(__dirname, 'client.html'));
+});
 
 app.use('/api', (req, res) => {
   res.status(404).json({ ok:false, error:'API route not found', path: req.originalUrl });
